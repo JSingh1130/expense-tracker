@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalElement = document.getElementById("total");
     const chartContainer = document.getElementById("chart-container");
     const addExpenseButton = document.getElementById("add-expense-button");
-    const API_URL = "http://localhost:5000";
+    const API_URL = "https://expense-backend-z0rk.onrender.com";
     let expenseChart;
 
     // ✅ Login
