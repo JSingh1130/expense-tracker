@@ -9,12 +9,21 @@ document.addEventListener("DOMContentLoaded", function () {
     const API_URL = "https://expense-backend-z0rk.onrender.com";
     let expenseChart;
 
-    // ✅ Block access to expense-tracker.html without token (even on back button)
+    // ✅ Block access to tracker page without token
     if (window.location.pathname.includes("expense-tracker.html")) {
         const token = localStorage.getItem("token");
+
         if (!token) {
-            window.location.href = "index.html";
+            window.location.replace("index.html");
         }
+
+        // ✅ Prevent back button access after logout
+        window.addEventListener("pageshow", function (event) {
+            const navigatedBack = event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward";
+            if (navigatedBack && !localStorage.getItem("token")) {
+                window.location.replace("index.html");
+            }
+        });
     }
 
     // ✅ Login
@@ -117,7 +126,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Fetch and Display Expenses
+    // ✅ Fetch Expenses
     async function fetchExpenses() {
         if (!expenseTableBody || !totalElement || !chartContainer || !expenseTableContainer) return;
 
@@ -167,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // ✅ Render Chart
     function renderChart(data) {
         const ctx = document.getElementById("expenseChart").getContext("2d");
         if (expenseChart) {
@@ -259,7 +269,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetchExpenses();
     }
 
-    // ✅ Global delete function
+    // ✅ Delete Expense
     window.deleteExpense = async function (expenseId) {
         const token = localStorage.getItem("token");
         if (!token) {

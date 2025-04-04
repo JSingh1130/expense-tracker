@@ -57,7 +57,7 @@
     function logout() {
       localStorage.removeItem("token");
 
-      // Prevent back navigation
+      // Prevent back navigation by manipulating browser history
       history.pushState(null, null, location.href);
       window.addEventListener("popstate", function () {
         history.pushState(null, null, location.href);
@@ -70,21 +70,30 @@
         showConfirmButton: false,
         timer: 1200
       }).then(() => {
-        window.location.href = "index.html";
+        window.location.replace("index.html");
       });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Auto-fill today's date
+      // ✅ Auto-fill today's date
       const dateInput = document.getElementById("expense-date");
       if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
       }
 
-      // Redirect to login if no token (on manual access or back press)
-      if (!localStorage.getItem("token")) {
-        window.location.href = "index.html";
+      // ✅ Protect page if token is missing
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.replace("index.html");
       }
+
+      // ✅ Recheck token on back/forward navigation
+      window.addEventListener("pageshow", function (event) {
+        const navBack = event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward";
+        if (navBack && !localStorage.getItem("token")) {
+          window.location.replace("index.html");
+        }
+      });
     });
   </script>
 
