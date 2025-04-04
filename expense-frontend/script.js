@@ -9,6 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const API_URL = "https://expense-backend-z0rk.onrender.com";
     let expenseChart;
 
+    // ✅ Block access to expense-tracker.html without token (even on back button)
+    if (window.location.pathname.includes("expense-tracker.html")) {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            window.location.href = "index.html";
+        }
+    }
+
     // ✅ Login
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
@@ -115,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const token = localStorage.getItem("token");
         if (!token) {
-            window.location.href = "login.html";
+            window.location.href = "index.html";
             return;
         }
 
@@ -190,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: "Unauthorized",
                 text: "Please log in first.",
             });
-            window.location.href = "login.html";
+            window.location.href = "index.html";
             return;
         }
 
@@ -255,7 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteExpense = async function (expenseId) {
         const token = localStorage.getItem("token");
         if (!token) {
-            window.location.href = "login.html";
+            window.location.href = "index.html";
             return;
         }
 
