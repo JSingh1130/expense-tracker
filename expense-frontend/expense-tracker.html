@@ -56,6 +56,13 @@
   <script>
     function logout() {
       localStorage.removeItem("token");
+
+      // Prevent back navigation
+      history.pushState(null, null, location.href);
+      window.addEventListener("popstate", function () {
+        history.pushState(null, null, location.href);
+      });
+
       Swal.fire({
         icon: "success",
         title: "Logged Out",
@@ -68,9 +75,15 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      // Auto-fill today's date
       const dateInput = document.getElementById("expense-date");
       if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
+      }
+
+      // Redirect to login if no token (on manual access or back press)
+      if (!localStorage.getItem("token")) {
+        window.location.href = "index.html";
       }
     });
   </script>
