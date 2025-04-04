@@ -1,0 +1,182 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #ff7eb3, #4a90e2);
+    color: white;
+    position: relative;
+}
+
+/* Logout Button (Top Right) */
+.logout-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: #ff4757 !important;
+    color: white;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+    z-index: 9999;
+    width: auto !important;
+    display: inline-block;
+}
+
+.logout-btn:hover {
+    background: #e84118;
+}
+
+/* Main Container */
+.container {
+    width: 90%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+/* Layout for Expense Tracker */
+.tracker-content {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Left Section (Input + Chart) */
+.left-section {
+    width: 90%;
+}
+
+/* Expense Table Container (Outside Main Container) */
+.expense-table-container {
+    width: 450px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: left;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Styled Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    color: white;
+}
+
+th {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Color Box for Expense Indicator */
+.color-box {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+/* Remove Button */
+.remove-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.remove-btn:hover {
+    background: #e84118;
+}
+
+/* Input Fields */
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+input:focus {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Buttons */
+button {
+    width: 95%;
+    padding: 12px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:nth-child(1) { background: #57cc99; color: white; } /* Signup */
+button:nth-child(2) { background: #00a8ff; color: white; } /* Login */
+button:nth-child(3) { background: #ff4757; color: white; } /* Logout */
+button:nth-child(4) { background: #ffa502; color: white; } /* Add Expense */
+
+button:hover {
+    filter: brightness(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .expense-table-container {
+        position: static;
+        transform: none;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    .tracker-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .left-section {
+        width: 100%;
+    }
+}

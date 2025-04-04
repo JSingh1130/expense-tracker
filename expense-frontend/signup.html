@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup | Expense Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- ✅ SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Signup</h2>
+    <input type="text" id="signup-username" placeholder="Username" required />
+    <input type="password" id="signup-password" placeholder="Password" required />
+    <button onclick="signup()">Signup</button>
+    <p>Already have an account? <a href="index.html">Login</a></p>
+  </div>
+
+  <script>
+    async function signup() {
+      const username = document.getElementById("signup-username").value;
+      const password = document.getElementById("signup-password").value;
+
+      if (!username || !password) {
+        Swal.fire({
+          icon: "warning",
+          title: "Missing Fields",
+          text: "Please enter both username and password."
+        });
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Signup Successful",
+            text: "Redirecting to login...",
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            window.location.href = "index.html";
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Signup Failed",
+            text: data.message || "Something went wrong."
+          });
+        }
+      } catch (error) {
+        console.error("Signup error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Server error. Please try again."
+        });
+      }
+    }
+  </script>
+</body>
+</html>

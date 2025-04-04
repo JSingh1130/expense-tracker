@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker</title>
+  <link rel="stylesheet" href="/styles.css" />
+
+  <!-- ✅ SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <!-- ✅ Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- ✅ Logout Button -->
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <!-- ✅ Main Container -->
+  <div class="container">
+    <h2>Expense Tracker</h2>
+    <div class="tracker-content">
+      <div class="left-section">
+        <input type="text" id="expense-name" placeholder="Expense Name" />
+        <input type="number" id="expense-amount" placeholder="Amount" />
+        <input type="date" id="expense-date" placeholder="Select Date" />
+        <button id="add-expense-button">Add Expense</button>
+
+        <h3>Total: $<span id="total">0</span></h3>
+
+        <!-- ✅ Chart Container -->
+        <div id="chart-container" style="display: none;">
+          <canvas id="expenseChart" width="400" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Expense Table -->
+  <div class="expense-table-container" id="expense-table-container" style="display: none;">
+    <h3>Expense Breakdown</h3>
+    <table id="expenseTable">
+      <thead>
+        <tr>
+          <th>Expense</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>Remove</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- ✅ Scripts -->
+  <script>
+    function logout() {
+      localStorage.removeItem("token");
+      Swal.fire({
+        icon: "success",
+        title: "Logged Out",
+        text: "You have been logged out successfully.",
+        showConfirmButton: false,
+        timer: 1200
+      }).then(() => {
+        window.location.href = "index.html";
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const dateInput = document.getElementById("expense-date");
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+    });
+  </script>
+
+  <script src="script.js"></script>
+</body>
+</html>
