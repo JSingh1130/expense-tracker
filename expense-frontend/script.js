@@ -6,18 +6,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalElement = document.getElementById("total");
     const chartContainer = document.getElementById("chart-container");
     const addExpenseButton = document.getElementById("add-expense-button");
+    const loader = document.getElementById("loader");
+
     const API_URL = "https://expense-backend-z0rk.onrender.com";
     let expenseChart;
+
+    const showLoader = () => loader && (loader.style.display = "flex");
+    const hideLoader = () => loader && (loader.style.display = "none");
+
+    // ✅ Hide loader after DOM loads (fixes signup.html infinite spinner issue)
+    hideLoader();
 
     // ✅ Block access to tracker page without token
     if (window.location.pathname.includes("expense-tracker.html")) {
         const token = localStorage.getItem("token");
-
         if (!token) {
             window.location.replace("index.html");
         }
 
-        // ✅ Prevent back button access after logout
+        // ✅ Prevent back navigation after logout
         window.addEventListener("pageshow", function (event) {
             const navigatedBack = event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward";
             if (navigatedBack && !localStorage.getItem("token")) {
@@ -26,11 +33,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Login
+    // ✅ Login handler
     if (loginForm) {
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-
             const username = document.getElementById("login-username").value;
             const password = document.getElementById("login-password").value;
 
@@ -45,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (res.ok) {
                     localStorage.setItem("token", data.token);
-
                     Swal.fire({
                         icon: "success",
                         title: "Login Successful",
@@ -63,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }
             } catch (error) {
-                console.error(error);
+                console.error("Login error:", error);
                 Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -73,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Signup
+    // ✅ Signup handler
     if (signupForm) {
         signupForm.addEventListener("submit", async (e) => {
             e.preventDefault();
@@ -81,12 +86,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const password = document.getElementById("signup-password").value;
 
             if (!username || !password) {
-                Swal.fire({
+                return Swal.fire({
                     icon: "warning",
                     title: "Missing Fields",
                     text: "Please enter both username and password.",
                 });
-                return;
             }
 
             try {
@@ -131,57 +135,52 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!expenseTableBody || !totalElement || !chartContainer || !expenseTableContainer) return;
 
         const token = localStorage.getItem("token");
-        if (!token) {
-            window.location.href = "index.html";
-            return;
-        }
+        if (!token) return window.location.href = "index.html";
 
-        const res = await fetch(`${API_URL}/expenses`, {
-            headers: { Authorization: `Bearer ${token}` },
-        });
+        try {
+            const res = await fetch(`${API_URL}/expenses`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
-        const expenses = await res.json();
-        let total = 0;
-        let expenseData = {};
+            const expenses = await res.json();
+            let total = 0;
+            let expenseData = {};
 
-        expenseTableBody.innerHTML = "";
+            expenseTableBody.innerHTML = "";
+            expenseTableContainer.style.display = expenses.length ? "block" : "none";
 
-        if (expenses.length > 0) {
-            expenseTableContainer.style.display = "block";
-        } else {
-            expenseTableContainer.style.display = "none";
-        }
+            expenses.forEach(exp => {
+                total += exp.amount;
+                expenseData[exp.name] = (expenseData[exp.name] || 0) + exp.amount;
 
-        expenses.forEach(expense => {
-            total += expense.amount;
-            expenseData[expense.name] = (expenseData[expense.name] || 0) + expense.amount;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${exp.name}</td>
+                    <td>$${exp.amount}</td>
+                    <td>${new Date(exp.date).toLocaleDateString()}</td>
+                    <td><button onclick="deleteExpense('${exp._id}')">Delete</button></td>
+                `;
+                expenseTableBody.appendChild(row);
+            });
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${expense.name}</td>
-                <td>$${expense.amount}</td>
-                <td>${new Date(expense.date).toLocaleDateString()}</td>
-                <td><button onclick="deleteExpense('${expense._id}')">Delete</button></td>
-            `;
-            expenseTableBody.appendChild(row);
-        });
+            totalElement.textContent = total;
 
-        totalElement.textContent = total;
-
-        if (Object.keys(expenseData).length > 0) {
-            chartContainer.style.display = "block";
-            renderChart(expenseData);
-        } else {
-            chartContainer.style.display = "none";
+            if (Object.keys(expenseData).length) {
+                chartContainer.style.display = "block";
+                renderChart(expenseData);
+            } else {
+                chartContainer.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Fetch Expenses Error:", err);
         }
     }
 
     // ✅ Render Chart
     function renderChart(data) {
         const ctx = document.getElementById("expenseChart").getContext("2d");
-        if (expenseChart) {
-            expenseChart.destroy();
-        }
+        if (expenseChart) expenseChart.destroy();
+
         expenseChart = new Chart(ctx, {
             type: "pie",
             data: {
@@ -193,41 +192,31 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             options: {
                 plugins: {
-                    legend: { display: false }
-                }
-            }
+                    legend: { display: false },
+                },
+            },
         });
     }
 
     // ✅ Add Expense
     async function addExpense() {
         const token = localStorage.getItem("token");
-        if (!token) {
-            Swal.fire({
-                icon: "warning",
-                title: "Unauthorized",
-                text: "Please log in first.",
-            });
-            window.location.href = "index.html";
-            return;
-        }
+        if (!token) return window.location.href = "index.html";
 
         const name = document.getElementById("expense-name").value.trim();
         const amount = parseFloat(document.getElementById("expense-amount").value);
-        const dateField = document.getElementById("expense-date");
-        const date = dateField ? dateField.value : new Date().toISOString();
+        const date = document.getElementById("expense-date")?.value || new Date().toISOString();
 
         if (!name || isNaN(amount)) {
-            Swal.fire({
+            return Swal.fire({
                 icon: "warning",
                 title: "Invalid Input",
                 text: "Please fill all fields correctly.",
             });
-            return;
         }
 
         try {
-            const response = await fetch(`${API_URL}/expenses`, {
+            const res = await fetch(`${API_URL}/expenses`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -236,46 +225,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify({ name, amount, date }),
             });
 
-            if (response.ok) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Expense Added",
-                    showConfirmButton: false,
-                    timer: 1200,
-                });
+            if (res.ok) {
+                Swal.fire({ icon: "success", title: "Expense Added", showConfirmButton: false, timer: 1200 });
                 fetchExpenses();
             } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Failed to Add",
-                    text: "Expense could not be added.",
-                });
+                Swal.fire({ icon: "error", title: "Failed to Add", text: "Expense could not be added." });
             }
         } catch (error) {
             console.error("Add Expense Error:", error);
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: "Something went wrong while adding the expense.",
-            });
+            Swal.fire({ icon: "error", title: "Error", text: "Something went wrong while adding the expense." });
         }
     }
 
-    if (addExpenseButton) {
-        addExpenseButton.addEventListener("click", addExpense);
-    }
-
-    if (document.getElementById("expense-name")) {
-        fetchExpenses();
-    }
+    if (addExpenseButton) addExpenseButton.addEventListener("click", addExpense);
+    if (document.getElementById("expense-name")) fetchExpenses();
 
     // ✅ Delete Expense
     window.deleteExpense = async function (expenseId) {
         const token = localStorage.getItem("token");
-        if (!token) {
-            window.location.href = "index.html";
-            return;
-        }
+        if (!token) return window.location.href = "index.html";
 
         await fetch(`${API_URL}/expenses/${expenseId}`, {
             method: "DELETE",
