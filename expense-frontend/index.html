@@ -6,16 +6,54 @@
   <title>Login | Expense Tracker</title>
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- ✅ Add SweetAlert2 -->
+  <!-- ✅ SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    /* ✅ Loader Spinner Styling */
+    #loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #007BFF;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <!-- ✅ Intro Section -->
+
+  <!-- ✅ Loader Overlay -->
+  <div id="loader">
+    <div class="loader-spinner"></div>
+  </div>
+
+  <!-- ✅ Hero Section -->
   <div class="hero">
     <h1>Welcome to Expense Tracker 💸</h1>
     <p>Track your expenses effortlessly. Add, view, and manage your daily spending with easy-to-use charts and summaries. All your data is securely stored and accessible only by you.</p>
   </div>
 
+  <!-- ✅ Login Form -->
   <div class="container">
     <h2>Login</h2>
     <form id="login-form">
@@ -26,6 +64,69 @@
     <p>Don't have an account? <a href="signup.html">Sign up</a></p>
   </div>
 
+  <!-- ✅ Loader + Login Logic -->
+  <script>
+    const loader = document.getElementById("loader");
+    const showLoader = () => loader.style.display = "flex";
+    const hideLoader = () => loader.style.display = "none";
+
+    const API_URL = "https://expense-backend-z0rk.onrender.com";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const loginForm = document.getElementById("login-form");
+
+      loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        showLoader();
+
+        const username = document.getElementById("login-username").value;
+        const password = document.getElementById("login-password").value;
+
+        try {
+          const res = await fetch(`${API_URL}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await res.json();
+          hideLoader();
+
+          if (res.ok) {
+            localStorage.setItem("token", data.token);
+            Swal.fire({
+              icon: "success",
+              title: "Login Successful",
+              text: "Welcome back!",
+              showConfirmButton: false,
+              timer: 1500,
+            }).then(() => {
+              window.location.href = "expense-tracker.html";
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Login Failed",
+              text: data.message || "Invalid credentials",
+            });
+          }
+        } catch (error) {
+          hideLoader();
+          console.error("Login error:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong. Please try again.",
+          });
+        }
+      });
+    });
+
+    // In case redirected back
+    window.addEventListener("load", hideLoader);
+  </script>
+
+  <!-- ✅ External Logic (DO NOT REMOVE) -->
   <script src="script.js"></script>
 </body>
 </html>
