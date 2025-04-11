@@ -5,11 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | Expense Tracker</title>
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- ✅ Add SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .hero {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      color: #007BFF;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      color: #555;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    input, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    p {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- ✅ Project Intro Section -->
+  <div class="hero">
+    <h1>Welcome to Expense Tracker 💸</h1>
+    <p>Track your expenses effortlessly. Add, view, and manage your daily spending with easy-to-use charts and summaries. All your data is securely stored and accessible only by you.</p>
+  </div>
+
+  <!-- ✅ Login Form -->
   <div class="container">
     <h2>Login</h2>
     <form id="login-form">
