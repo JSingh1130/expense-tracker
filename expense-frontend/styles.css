@@ -170,13 +170,32 @@ button:hover {
         width: 100%;
         margin-top: 20px;
     }
-    
+
     .tracker-content {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .left-section {
         width: 100%;
     }
+}
+
+/* ✅ Intro Section Styling */
+.hero {
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 600px;
+}
+
+.hero h1 {
+    font-size: 2rem;
+    color: #00e1ff;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1rem;
+    line-height: 1.5;
 }
