@@ -23,11 +23,7 @@ A full-stack web application to track daily expenses with user authentication, d
 - Protected routes
 - Responsive UI
 
----
 
-## 📁 Folder Structure
-
-```
 
 
 ````
