@@ -29,17 +29,6 @@ A full-stack web application to track daily expenses with user authentication, d
 
 ```
 
-.
-├── public/
-│   ├── index.html
-│   ├── login.html
-│   ├── dashboard.html
-│   ├── styles.css
-│   └── script.js
-├── server.js
-├── .env
-├── .gitignore
-└── README.md
 
 ````
 
@@ -50,7 +39,7 @@ A full-stack web application to track daily expenses with user authentication, d
 1. **Clone Repository**
 
 ```bash
-git clone https://github.com/your-username/expense-tracker.git
+git clone https://github.com/JSingh1130/expense-tracker
 cd expense-tracker
 ````
 
