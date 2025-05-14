@@ -7,10 +7,10 @@ A full-stack web application to track daily expenses with user authentication, d
 
 ## 🔧 Tech Stack
 
-- **Frontend:** HTML, CSS, JavaScript, Chart.js
-- **Backend:** Node.js, Express.js, MongoDB, Mongoose
-- **Authentication:** JWT, bcrypt
-- **Others:** dotenv, cors
+- Frontend: HTML, CSS, JavaScript, Chart.js
+- Backend: Node.js, Express.js, MongoDB, Mongoose
+- Authentication: JWT, bcrypt
+- Others: dotenv, cors
 
 ---
 
